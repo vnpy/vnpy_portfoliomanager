@@ -26,7 +26,7 @@ from pathlib import Path
 import importlib_metadata
 from vnpy.trader.app import BaseApp
 
-from .engine import AlgoEngine, APP_NAME
+from .engine import PortfolioEngine, APP_NAME
 
 
 try:
