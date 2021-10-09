@@ -67,8 +67,8 @@ class ContractResult:
 
         # 计算新成交额
         for trade in self.new_trades:
-            trade_volume = trade.volume
-            trade_cost = trade.price * trade_volume * size
+            trade_volume: float = trade.volume
+            trade_cost: float = trade.price * trade_volume * size
 
             if trade.direction == Direction.LONG:
                 self.long_cost += trade_cost
@@ -80,11 +80,11 @@ class ContractResult:
         self.new_trades.clear()
 
         # 计算成交利润
-        long_value = self.long_volume * last_price * size
-        long_pnl = long_value - self.long_cost
+        long_value: float = self.long_volume * last_price * size
+        long_pnl: float = long_value - self.long_cost
 
-        shrot_value = self.short_volume * last_price * size
-        short_pnl = self.short_cost - shrot_value
+        shrot_value: float = self.short_volume * last_price * size
+        short_pnl: float = self.short_cost - shrot_value
 
         self.trading_pnl = long_pnl + short_pnl
 

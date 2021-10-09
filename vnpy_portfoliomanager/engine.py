@@ -25,11 +25,11 @@ from vnpy.trader.utility import load_json, save_json
 from .base import ContractResult, PortfolioResult
 
 
-APP_NAME = "PortfolioManager"
+APP_NAME: str = "PortfolioManager"
 
-EVENT_PM_CONTRACT = "ePmContract"
-EVENT_PM_PORTFOLIO = "ePmPortfolio"
-EVENT_PM_TRADE = "ePmTrade"
+EVENT_PM_CONTRACT: str = "ePmContract"
+EVENT_PM_PORTFOLIO: str = "ePmPortfolio"
+EVENT_PM_TRADE: str = "ePmTrade"
 
 
 class PortfolioEngine(BaseEngine):
@@ -79,16 +79,16 @@ class PortfolioEngine(BaseEngine):
         """"""
         trade: TradeData = event.data
 
-        reference = self.order_reference_map.get(trade.vt_orderid, "")
+        reference: str = self.order_reference_map.get(trade.vt_orderid, "")
         if not reference:
             return
 
         vt_symbol: str = trade.vt_symbol
         key: set = (reference, vt_symbol)
 
-        contract_result = self.contract_results.get(key, None)
+        contract_result: Optional[ContractResult] = self.contract_results.get(key, None)
         if not contract_result:
-            contract_result = ContractResult(self, reference, vt_symbol)
+            contract_result: ContractResult = ContractResult(self, reference, vt_symbol)
             self.contract_results[key] = contract_result
 
         contract_result.update_trade(trade)
@@ -101,11 +101,11 @@ class PortfolioEngine(BaseEngine):
         if trade.vt_symbol in self.subscribed:
             return
 
-        contract = self.main_engine.get_contract(trade.vt_symbol)
+        contract: Optional[ContractData] = self.main_engine.get_contract(trade.vt_symbol)
         if not contract:
             return
 
-        req = SubscribeRequest(contract.symbol, contract.exchange)
+        req: SubscribeRequest = SubscribeRequest(contract.symbol, contract.exchange)
         self.main_engine.subscribe(req, contract.gateway_name)
 
     def process_timer_event(self, event: Event) -> None:
@@ -121,7 +121,7 @@ class PortfolioEngine(BaseEngine):
         for contract_result in self.contract_results.values():
             contract_result.calculate_pnl()
 
-            portfolio_result = self.get_portfolio_result(contract_result.reference)
+            portfolio_result: PortfolioResult = self.get_portfolio_result(contract_result.reference)
             portfolio_result.trading_pnl += contract_result.trading_pnl
             portfolio_result.holding_pnl += contract_result.holding_pnl
             portfolio_result.total_pnl += contract_result.total_pnl
@@ -153,15 +153,15 @@ class PortfolioEngine(BaseEngine):
         today: str = datetime.now().strftime("%Y-%m-%d")
         date_changed: bool = False
 
-        date = data.pop("date")
+        date: str = data.pop("date")
         for key, d in data.items():
             reference, vt_symbol = key.split(",")
 
             if date == today:
-                pos = d["open_pos"]
+                pos: float = d["open_pos"]
             else:
-                pos = d["last_pos"]
-                date_changed = True
+                pos: float = d["last_pos"]
+                date_changed: bool = True
 
             self.result_symbols.add(vt_symbol)
             self.contract_results[(reference, vt_symbol)] = ContractResult(
@@ -196,7 +196,7 @@ class PortfolioEngine(BaseEngine):
 
     def save_setting(self) -> None:
         """"""
-        setting: dict = {"timer_interval": self.timer_interval}
+        setting: Dict[str, int] = {"timer_interval": self.timer_interval}
         save_json(self.setting_filename, setting)
 
     def load_order(self) -> None:
@@ -210,7 +210,7 @@ class PortfolioEngine(BaseEngine):
 
     def save_order(self) -> None:
         """"""
-        order_data: dict = {
+        order_data: Dict[str, Any] = {
             "date": datetime.now().strftime("%Y-%m-%d"),
             "data": self.order_reference_map
         }
@@ -224,7 +224,7 @@ class PortfolioEngine(BaseEngine):
 
     def get_portfolio_result(self, reference: str) -> PortfolioResult:
         """"""
-        portfolio_result = self.portfolio_results.get(reference, None)
+        portfolio_result: Optional[PortfolioResult] = self.portfolio_results.get(reference, None)
         if not portfolio_result:
             portfolio_result = PortfolioResult(reference)
             self.portfolio_results[reference] = portfolio_result

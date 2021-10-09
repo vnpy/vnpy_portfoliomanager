@@ -54,7 +54,7 @@ class PortfolioManager(QtWidgets.QWidget):
         """"""
         self.setWindowTitle("投资组合")
 
-        labels = [
+        labels: List[str] = [
             "组合名称",
             "本地代码",
             "开盘仓位",
@@ -210,7 +210,7 @@ class PortfolioManager(QtWidgets.QWidget):
         self,
         item: QtWidgets.QTreeWidgetItem,
         result: Union[ContractResult, PortfolioResult]
-    ):
+    ) -> None:
         start_column: int = 4
         for n, pnl in enumerate([
             result.trading_pnl,
@@ -249,7 +249,7 @@ class PortfolioTradeMonitor(QtWidgets.QTableWidget):
         super().__init__()
 
         self.init_ui()
-        self.filter = ""
+        self.filter: str = ""
 
     def init_ui(self) -> None:
         """"""
