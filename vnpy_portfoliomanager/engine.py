@@ -38,12 +38,12 @@ class PortfolioEngine(BaseEngine):
     data_filename: str = "portfolio_manager_data.json"
     order_filename: str = "portfolio_manager_order.json"
 
-    def __init__(self, main_engine: MainEngine, event_engine: EventEngine):
+    def __init__(self, main_engine: MainEngine, event_engine: EventEngine) -> None:
         """"""
         super().__init__(main_engine, event_engine, APP_NAME)
 
         self.get_tick: Optional[TickData] = self.main_engine.get_tick
-        self.get_contract = self.main_engine.get_contract
+        self.get_contract: Optional[ContractData] = self.main_engine.get_contract
 
         self.subscribed: Set[str] = set()
         self.result_symbols: Set[str] = set()

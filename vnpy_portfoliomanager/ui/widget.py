@@ -3,7 +3,6 @@ from vnpy.trader.object import TradeData
 from vnpy.event.engine import Event
 from vnpy.trader.ui import QtWidgets, QtCore, QtGui
 
-
 from vnpy.trader.engine import MainEngine, EventEngine
 from vnpy.trader.ui.widget import (
     BaseCell,
