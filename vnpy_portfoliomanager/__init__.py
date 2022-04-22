@@ -38,11 +38,11 @@ except importlib_metadata.PackageNotFoundError:
 class PortfolioManagerApp(BaseApp):
     """"""
 
-    app_name = APP_NAME
-    app_module = __module__
-    app_path = Path(__file__).parent
-    display_name = "投资组合"
-    engine_class = PortfolioEngine
-    widget_name = "PortfolioManager"
-    icon_name = str(app_path.joinpath("ui", "portfolio.ico"))
+    app_name: str = APP_NAME
+    app_modul: str = __module__
+    app_path: Path = Path(__file__).parent
+    display_name: str = "投资组合"
+    engine_class: PortfolioEngine = PortfolioEngine
+    widget_name: str = "PortfolioManager"
+    icon_name: str = str(app_path.joinpath("ui", "portfolio.ico"))
 
