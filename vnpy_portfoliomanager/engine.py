@@ -25,11 +25,11 @@ from vnpy.trader.utility import load_json, save_json
 from .base import ContractResult, PortfolioResult
 
 
-APP_NAME: str = "PortfolioManager"
+APP_NAME = "PortfolioManager"
 
-EVENT_PM_CONTRACT: str = "ePmContract"
-EVENT_PM_PORTFOLIO: str = "ePmPortfolio"
-EVENT_PM_TRADE: str = "ePmTrade"
+EVENT_PM_CONTRACT = "ePmContract"
+EVENT_PM_PORTFOLIO = "ePmPortfolio"
+EVENT_PM_TRADE = "ePmTrade"
 
 
 class PortfolioEngine(BaseEngine):

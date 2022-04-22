@@ -21,9 +21,9 @@ from ..engine import (
 )
 
 
-RED_COLOR: QtGui.QColor = QtGui.QColor("red")
-GREEN_COLOR: QtGui.QColor = QtGui.QColor("green")
-WHITE_COLOR: QtGui.QColor = QtGui.QColor("white")
+RED_COLOR = QtGui.QColor("red")
+GREEN_COLOR = QtGui.QColor("green")
+WHITE_COLOR = QtGui.QColor("white")
 
 
 class PortfolioManager(QtWidgets.QWidget):
