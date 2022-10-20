@@ -1,7 +1,10 @@
-from typing import Dict, List, Optional
+from typing import Dict, List, TYPE_CHECKING, Optional
 
 from vnpy.trader.object import TickData, TradeData, ContractData
 from vnpy.trader.constant import Direction
+
+if TYPE_CHECKING:
+    from .engine import PortfolioEngine
 
 
 class ContractResult:
@@ -9,8 +12,7 @@ class ContractResult:
 
     def __init__(
         self,
-        contract: ContractData,
-        tick: TickData,
+        engine: "PortfolioEngine",
         reference: str,
         vt_symbol: str,
         open_pos: int = 0
@@ -18,8 +20,7 @@ class ContractResult:
         """"""
         super().__init__()
 
-        self.contract: Optional[ContractData] = contract
-        self.tick: Optional[TickData] = tick
+        self.engine: "PortfolioEngine" = engine
 
         self.reference: str = reference
         self.vt_symbol: str = vt_symbol
@@ -54,11 +55,15 @@ class ContractResult:
 
     def calculate_pnl(self) -> None:
         """"""
-        if not self.contract or not self.tick:
+        vt_symbol: str = self.vt_symbol
+
+        contract: Optional[ContractData] = self.engine.get_contract(vt_symbol)
+        tick: Optional[TickData] = self.engine.get_tick(vt_symbol)
+        if not contract or not tick:
             return
 
-        last_price: float = self.tick.last_price
-        size: float = self.contract.size
+        last_price: float = tick.last_price
+        size: float = contract.size
 
         # 计算新成交额
         for trade in self.new_trades:
@@ -84,8 +89,7 @@ class ContractResult:
         self.trading_pnl = long_pnl + short_pnl
 
         # 计算未实现利润和总利润
-        self.holding_pnl = (
-            last_price - self.tick.pre_close) * self.open_pos * size
+        self.holding_pnl = (last_price - tick.pre_close) * self.open_pos * size
         self.total_pnl = self.holding_pnl + self.trading_pnl
 
 

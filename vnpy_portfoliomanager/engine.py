@@ -1,6 +1,5 @@
 from typing import Any, Dict, Set, Optional
 from datetime import datetime
-from copy import copy
 
 from vnpy.event import Event
 from vnpy.trader.engine import (
@@ -87,30 +86,26 @@ class PortfolioEngine(BaseEngine):
         vt_symbol: str = trade.vt_symbol
         key: set = (reference, vt_symbol)
 
-        contract_result: Optional[ContractResult] = self.contract_results.get(
-            key, None)
+        contract_result: Optional[ContractResult] = self.contract_results.get(key, None)
         if not contract_result:
-            contract_result: ContractResult = ContractResult(self.get_contract(
-                vt_symbol), self.get_tick(vt_symbol), reference, vt_symbol)
+            contract_result: ContractResult = ContractResult(self, reference, vt_symbol)
             self.contract_results[key] = contract_result
 
         contract_result.update_trade(trade)
 
         # 添加成交数据
         trade.reference = reference
-        self.event_engine.put(Event(EVENT_PM_TRADE, copy(trade)))
+        self.event_engine.put(Event(EVENT_PM_TRADE, trade))
 
         # 自动订阅tick数据
         if trade.vt_symbol in self.subscribed:
             return
 
-        contract: Optional[ContractData] = self.main_engine.get_contract(
-            trade.vt_symbol)
+        contract: Optional[ContractData] = self.main_engine.get_contract(trade.vt_symbol)
         if not contract:
             return
 
-        req: SubscribeRequest = SubscribeRequest(
-            contract.symbol, contract.exchange)
+        req: SubscribeRequest = SubscribeRequest(contract.symbol, contract.exchange)
         self.main_engine.subscribe(req, contract.gateway_name)
 
     def process_timer_event(self, event: Event) -> None:
@@ -126,17 +121,16 @@ class PortfolioEngine(BaseEngine):
         for contract_result in self.contract_results.values():
             contract_result.calculate_pnl()
 
-            portfolio_result: PortfolioResult = self.get_portfolio_result(
-                contract_result.reference)
+            portfolio_result: PortfolioResult = self.get_portfolio_result(contract_result.reference)
             portfolio_result.trading_pnl += contract_result.trading_pnl
             portfolio_result.holding_pnl += contract_result.holding_pnl
             portfolio_result.total_pnl += contract_result.total_pnl
 
-            event: Event = Event(EVENT_PM_CONTRACT, copy(contract_result))
+            event: Event = Event(EVENT_PM_CONTRACT, contract_result)
             self.event_engine.put(event)
 
         for portfolio_result in self.portfolio_results.values():
-            event: Event = Event(EVENT_PM_PORTFOLIO, copy(portfolio_result))
+            event: Event = Event(EVENT_PM_PORTFOLIO, portfolio_result)
             self.event_engine.put(event)
 
     def process_contract_event(self, event: Event) -> None:
@@ -145,8 +139,7 @@ class PortfolioEngine(BaseEngine):
         if contract.vt_symbol not in self.result_symbols:
             return
 
-        req: SubscribeRequest = SubscribeRequest(
-            contract.symbol, contract.exchange)
+        req: SubscribeRequest = SubscribeRequest(contract.symbol, contract.exchange)
         self.main_engine.subscribe(req, contract.gateway_name)
 
         self.subscribed.add(contract.vt_symbol)
@@ -172,8 +165,7 @@ class PortfolioEngine(BaseEngine):
 
             self.result_symbols.add(vt_symbol)
             self.contract_results[(reference, vt_symbol)] = ContractResult(
-                self.get_contract(vt_symbol),
-                self.get_tick(vt_symbol),
+                self,
                 reference,
                 vt_symbol,
                 pos
@@ -232,8 +224,7 @@ class PortfolioEngine(BaseEngine):
 
     def get_portfolio_result(self, reference: str) -> PortfolioResult:
         """"""
-        portfolio_result: Optional[PortfolioResult] = self.portfolio_results.get(
-            reference, None)
+        portfolio_result: Optional[PortfolioResult] = self.portfolio_results.get(reference, None)
         if not portfolio_result:
             portfolio_result = PortfolioResult(reference)
             self.portfolio_results[reference] = portfolio_result
