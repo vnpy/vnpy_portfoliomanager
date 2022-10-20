@@ -3,7 +3,6 @@ from vnpy.trader.object import TradeData
 from vnpy.event.engine import Event
 from vnpy.trader.ui import QtWidgets, QtCore, QtGui
 
-
 from vnpy.trader.engine import MainEngine, EventEngine
 from vnpy.trader.ui.widget import (
     BaseCell,
@@ -22,9 +21,9 @@ from ..engine import (
 )
 
 
-RED_COLOR: QtGui.QColor = QtGui.QColor("red")
-GREEN_COLOR: QtGui.QColor = QtGui.QColor("green")
-WHITE_COLOR: QtGui.QColor = QtGui.QColor("white")
+RED_COLOR = QtGui.QColor("red")
+GREEN_COLOR = QtGui.QColor("green")
+WHITE_COLOR = QtGui.QColor("white")
 
 
 class PortfolioManager(QtWidgets.QWidget):
