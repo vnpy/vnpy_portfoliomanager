@@ -22,6 +22,7 @@
 
 
 from pathlib import Path
+from typing import Type
 
 import importlib_metadata
 from vnpy.trader.app import BaseApp
@@ -42,7 +43,7 @@ class PortfolioManagerApp(BaseApp):
     app_modul: str = __module__
     app_path: Path = Path(__file__).parent
     display_name: str = "投资组合"
-    engine_class: PortfolioEngine = PortfolioEngine
+    engine_class: Type[PortfolioEngine] = PortfolioEngine
     widget_name: str = "PortfolioManager"
     icon_name: str = str(app_path.joinpath("ui", "portfolio.ico"))
 
