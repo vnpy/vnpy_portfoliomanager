@@ -40,7 +40,7 @@ class PortfolioManagerApp(BaseApp):
     """"""
 
     app_name: str = APP_NAME
-    app_modul: str = __module__
+    app_module: str = __module__
     app_path: Path = Path(__file__).parent
     display_name: str = "投资组合"
     engine_class: Type[PortfolioEngine] = PortfolioEngine
