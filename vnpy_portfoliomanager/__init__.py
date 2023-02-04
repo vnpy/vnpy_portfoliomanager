@@ -31,7 +31,7 @@ from .engine import PortfolioEngine, APP_NAME
 
 
 try:
-    __version__ = importlib_metadata.version("vnpy_algotrading")
+    __version__ = importlib_metadata.version("vnpy_portfoliomanager")
 except importlib_metadata.PackageNotFoundError:
     __version__ = "dev"
 
