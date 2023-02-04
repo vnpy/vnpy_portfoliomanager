@@ -127,13 +127,11 @@ class PortfolioEngine(BaseEngine):
             portfolio_result.holding_pnl += contract_result.holding_pnl
             portfolio_result.total_pnl += contract_result.total_pnl
 
-            d: dict = copy(contract_result).__dict__
-            d.pop("engine")
-            event: Event = Event(EVENT_PM_CONTRACT, d)
+            event: Event = Event(EVENT_PM_CONTRACT, contract_result.get_data())
             self.event_engine.put(event)
 
         for portfolio_result in self.portfolio_results.values():
-            event: Event = Event(EVENT_PM_PORTFOLIO, portfolio_result.__dict__)
+            event: Event = Event(EVENT_PM_PORTFOLIO, portfolio_result.get_data())
             self.event_engine.put(event)
 
     def process_contract_event(self, event: Event) -> None:

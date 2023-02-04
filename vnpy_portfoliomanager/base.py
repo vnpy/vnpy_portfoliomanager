@@ -92,6 +92,23 @@ class ContractResult:
         self.holding_pnl = (last_price - tick.pre_close) * self.open_pos * size
         self.total_pnl = self.holding_pnl + self.trading_pnl
 
+    def get_data(self) -> dict:
+        """获取数据字典"""
+        data: dict = {
+            "reference": self.reference,
+            "vt_symbol": self.vt_symbol,
+            "open_pos": self.open_pos,
+            "last_pos": self.last_pos,
+            "trading_pnl": self.trading_pnl,
+            "holding_pnl": self.holding_pnl,
+            "total_pnl": self.total_pnl,
+            "long_volume": self.long_volume,
+            "short_volume": self.short_volume,
+            "long_cost": self.long_cost,
+            "short_cost": self.short_cost
+        }
+        return data
+
 
 class PortfolioResult:
     """"""
@@ -110,3 +127,13 @@ class PortfolioResult:
         self.trading_pnl = 0
         self.holding_pnl = 0
         self.total_pnl = 0
+
+    def get_data(self) -> dict:
+        """获取数据字典"""
+        data: dict = {
+            "reference": self.reference,
+            "trading_pnl": self.trading_pnl,
+            "holding_pnl": self.holding_pnl,
+            "total_pnl": self.total_pnl,
+        }
+        return data
