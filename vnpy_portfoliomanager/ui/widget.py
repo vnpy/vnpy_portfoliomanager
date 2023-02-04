@@ -173,30 +173,30 @@ class PortfolioManager(QtWidgets.QWidget):
 
     def process_contract_event(self, event: Event) -> None:
         """"""
-        contract_result: ContractResult = event.data
+        contract_result: dict = event.data
 
         contract_item: QtWidgets.QTreeWidgetItem = self.get_contract_item(
-            contract_result.reference,
-            contract_result.vt_symbol
+            contract_result["reference"],
+            contract_result["vt_symbol"]
         )
-        contract_item.setText(2, str(contract_result.open_pos))
-        contract_item.setText(3, str(contract_result.last_pos))
-        contract_item.setText(4, str(contract_result.trading_pnl))
-        contract_item.setText(5, str(contract_result.holding_pnl))
-        contract_item.setText(6, str(contract_result.total_pnl))
-        contract_item.setText(7, str(contract_result.long_volume))
-        contract_item.setText(8, str(contract_result.short_volume))
+        contract_item.setText(2, str(contract_result["open_pos"]))
+        contract_item.setText(3, str(contract_result["last_pos"]))
+        contract_item.setText(4, str(contract_result["trading_pnl"]))
+        contract_item.setText(5, str(contract_result["holding_pnl"]))
+        contract_item.setText(6, str(contract_result["total_pnl"]))
+        contract_item.setText(7, str(contract_result["long_volume"]))
+        contract_item.setText(8, str(contract_result["short_volume"]))
 
         self.update_item_color(contract_item, contract_result)
 
     def process_portfolio_event(self, event: Event) -> None:
         """"""
-        portfolio_result: PortfolioResult = event.data
+        portfolio_result: dict = event.data
 
-        portfolio_item: QtWidgets.QTreeWidgetItem = self.get_portfolio_item(portfolio_result.reference)
-        portfolio_item.setText(4, str(portfolio_result.trading_pnl))
-        portfolio_item.setText(5, str(portfolio_result.holding_pnl))
-        portfolio_item.setText(6, str(portfolio_result.total_pnl))
+        portfolio_item: QtWidgets.QTreeWidgetItem = self.get_portfolio_item(portfolio_result["reference"])
+        portfolio_item.setText(4, str(portfolio_result["trading_pnl"]))
+        portfolio_item.setText(5, str(portfolio_result["holding_pnl"]))
+        portfolio_item.setText(6, str(portfolio_result["total_pnl"]))
 
         self.update_item_color(portfolio_item, portfolio_result)
 
@@ -208,13 +208,13 @@ class PortfolioManager(QtWidgets.QWidget):
     def update_item_color(
         self,
         item: QtWidgets.QTreeWidgetItem,
-        result: Union[ContractResult, PortfolioResult]
+        result: dict
     ) -> None:
         start_column: int = 4
         for n, pnl in enumerate([
-            result.trading_pnl,
-            result.holding_pnl,
-            result.total_pnl
+            result["trading_pnl"],
+            result["holding_pnl"],
+            result["total_pnl"]
         ]):
             i: int = n + start_column
 
