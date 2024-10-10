@@ -69,7 +69,7 @@ class PortfolioManager(QtWidgets.QWidget):
         self.tree: QtWidgets.QTreeWidget = QtWidgets.QTreeWidget()
         self.tree.setColumnCount(self.column_count)
         self.tree.setHeaderLabels(labels)
-        self.tree.header().setDefaultAlignment(QtCore.Qt.AlignCenter)
+        self.tree.header().setDefaultAlignment(QtCore.Qt.AlignmentFlag.AlignCenter)
         self.tree.header().setStretchLastSection(False)
 
         delegate: TreeDelegate = TreeDelegate()
@@ -144,7 +144,7 @@ class PortfolioManager(QtWidgets.QWidget):
             portfolio_item: QtWidgets.QTreeWidgetItem = QtWidgets.QTreeWidgetItem()
             portfolio_item.setText(0, reference)
             for i in range(2, self.column_count):
-                portfolio_item.setTextAlignment(i, QtCore.Qt.AlignCenter)
+                portfolio_item.setTextAlignment(i, QtCore.Qt.AlignmentFlag.AlignCenter)
 
             self.portfolio_items[reference] = portfolio_item
             self.tree.addTopLevelItem(portfolio_item)
@@ -162,7 +162,7 @@ class PortfolioManager(QtWidgets.QWidget):
             contract_item: QtWidgets.QTreeWidgetItem = QtWidgets.QTreeWidgetItem()
             contract_item.setText(1, vt_symbol)
             for i in range(2, self.column_count):
-                contract_item.setTextAlignment(i, QtCore.Qt.AlignCenter)
+                contract_item.setTextAlignment(i, QtCore.Qt.AlignmentFlag.AlignCenter)
 
             self.contract_items[key] = contract_item
 
@@ -268,7 +268,7 @@ class PortfolioTradeMonitor(QtWidgets.QTableWidget):
         self.setColumnCount(len(labels))
         self.setHorizontalHeaderLabels(labels)
         self.verticalHeader().setVisible(False)
-        self.setEditTriggers(self.NoEditTriggers)
+        self.setEditTriggers(self.EditTrigger.NoEditTriggers)
 
     def update_trade(self, trade: TradeData) -> None:
         """"""
