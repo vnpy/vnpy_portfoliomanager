@@ -29,9 +29,9 @@ WHITE_COLOR = QtGui.QColor("white")
 class PortfolioManager(QtWidgets.QWidget):
     """"""
 
-    signal_contract: QtCore.pyqtSignal = QtCore.pyqtSignal(Event)
-    signal_portfolio: QtCore.pyqtSignal = QtCore.pyqtSignal(Event)
-    signal_trade: QtCore.pyqtSignal = QtCore.pyqtSignal(Event)
+    signal_contract: QtCore.Signal = QtCore.Signal(Event)
+    signal_portfolio: QtCore.Signal = QtCore.Signal(Event)
+    signal_trade: QtCore.Signal = QtCore.Signal(Event)
 
     def __init__(self, main_engine: MainEngine, event_engine: EventEngine) -> None:
         """"""
