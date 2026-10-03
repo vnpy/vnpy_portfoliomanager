@@ -1,3 +1,4 @@
+"""投资组合界面组件。"""
 from vnpy.trader.object import TradeData
 from vnpy.event.engine import Event
 from vnpy.trader.ui import QtWidgets, QtCore, QtGui
@@ -25,14 +26,14 @@ WHITE_COLOR = QtGui.QColor("white")
 
 
 class PortfolioManager(QtWidgets.QWidget):
-    """"""
+    """投资组合主界面。"""
 
     signal_contract: QtCore.Signal = QtCore.Signal(Event)
     signal_portfolio: QtCore.Signal = QtCore.Signal(Event)
     signal_trade: QtCore.Signal = QtCore.Signal(Event)
 
     def __init__(self, main_engine: MainEngine, event_engine: EventEngine) -> None:
-        """"""
+        """取得组合引擎，初始化界面并刷新成交。"""
         super().__init__()
 
         self.main_engine: MainEngine = main_engine
@@ -48,7 +49,7 @@ class PortfolioManager(QtWidgets.QWidget):
         self.update_trades()
 
     def init_ui(self) -> None:
-        """"""
+        """搭建组合树、成交表，以及展开、折叠、列宽、刷新频率和组合过滤。"""
         self.setWindowTitle("投资组合")
 
         labels: list[str] = [
@@ -117,7 +118,7 @@ class PortfolioManager(QtWidgets.QWidget):
         self.setLayout(vbox)
 
     def register_event(self) -> None:
-        """"""
+        """把合约、组合和成交事件接到界面。"""
         self.signal_contract.connect(self.process_contract_event)
         self.signal_portfolio.connect(self.process_portfolio_event)
         self.signal_trade.connect(self.process_trade_event)
@@ -127,7 +128,7 @@ class PortfolioManager(QtWidgets.QWidget):
         self.event_engine.register(EVENT_PM_TRADE, self.signal_trade.emit)
 
     def update_trades(self) -> None:
-        """"""
+        """把带有 reference 属性的历史成交填入成交表。"""
         trades: list[TradeData] = self.main_engine.get_all_trades()
         for trade in trades:
             # 过滤掉没有用reference的成交
@@ -135,7 +136,7 @@ class PortfolioManager(QtWidgets.QWidget):
                 self.monitor.update_trade(trade)
 
     def get_portfolio_item(self, reference: str) -> QtWidgets.QTreeWidgetItem:
-        """"""
+        """返回组合节点；没有则创建顶级节点，并加入组合下拉框。"""
         portfolio_item: QtWidgets.QTreeWidgetItem | None = self.portfolio_items.get(reference, None)
 
         if not portfolio_item:
@@ -152,7 +153,7 @@ class PortfolioManager(QtWidgets.QWidget):
         return portfolio_item
 
     def get_contract_item(self, reference: str, vt_symbol: str) -> QtWidgets.QTreeWidgetItem:
-        """"""
+        """返回合约节点；没有则挂到对应组合下。"""
         key: tuple[str, str] = (reference, vt_symbol)
         contract_item: QtWidgets.QTreeWidgetItem | None = self.contract_items.get(key, None)
 
@@ -170,7 +171,7 @@ class PortfolioManager(QtWidgets.QWidget):
         return contract_item
 
     def process_contract_event(self, event: Event) -> None:
-        """"""
+        """用合约结果刷新树节点上的仓位、盈亏和成交量，并按盈亏着色。"""
         contract_result: dict = event.data
 
         contract_item: QtWidgets.QTreeWidgetItem = self.get_contract_item(
@@ -188,7 +189,7 @@ class PortfolioManager(QtWidgets.QWidget):
         self.update_item_color(contract_item, contract_result)
 
     def process_portfolio_event(self, event: Event) -> None:
-        """"""
+        """用组合结果刷新交易盈亏、持仓盈亏和总盈亏，并着色。"""
         portfolio_result: dict = event.data
 
         portfolio_item: QtWidgets.QTreeWidgetItem = self.get_portfolio_item(portfolio_result["reference"])
@@ -199,7 +200,7 @@ class PortfolioManager(QtWidgets.QWidget):
         self.update_item_color(portfolio_item, portfolio_result)
 
     def process_trade_event(self, event: Event) -> None:
-        """"""
+        """把新成交插入成交表。"""
         trade: TradeData = event.data
         self.monitor.update_trade(trade)
 
@@ -208,6 +209,7 @@ class PortfolioManager(QtWidgets.QWidget):
         item: QtWidgets.QTreeWidgetItem,
         result: dict
     ) -> None:
+        """交易盈亏、持仓盈亏和总盈亏大于 0 显示红色，小于 0 显示绿色，等于 0 显示白色。"""
         start_column: int = 4
         for n, pnl in enumerate([
             result["trading_pnl"],
@@ -224,32 +226,32 @@ class PortfolioManager(QtWidgets.QWidget):
                 item.setForeground(i, WHITE_COLOR)
 
     def resize_columns(self) -> None:
-        """"""
+        """按内容调整树的每一列宽度。"""
         for i in range(self.column_count):
             self.tree.resizeColumnToContents(i)
 
     def set_reference_filter(self, filter: str) -> None:
-        """"""
+        """忽略传入值，改用组合下拉框的当前文本过滤成交表。"""
         filter = self.reference_combo.currentText()
         self.monitor.set_filter(filter)
 
     def show(self) -> None:
-        """"""
+        """最大化显示窗口。"""
         self.showMaximized()
 
 
 class PortfolioTradeMonitor(QtWidgets.QTableWidget):
-    """"""
+    """组合成交表。"""
 
     def __init__(self) -> None:
-        """"""
+        """初始化成交表，过滤条件为空。"""
         super().__init__()
 
         self.init_ui()
         self.filter: str = ""
 
     def init_ui(self) -> None:
-        """"""
+        """设置成交表列，并隐藏行号、禁止编辑。"""
         labels: list[str] = [
             "组合",
             "成交号",
@@ -269,7 +271,7 @@ class PortfolioTradeMonitor(QtWidgets.QTableWidget):
         self.setEditTriggers(self.EditTrigger.NoEditTriggers)
 
     def update_trade(self, trade: TradeData) -> None:
-        """"""
+        """在表格首行插入成交；过滤条件与组合名不一致时隐藏该行。"""
         self.insertRow(0)
 
         reference_cell: BaseCell = BaseCell(trade.reference, trade)
@@ -300,7 +302,7 @@ class PortfolioTradeMonitor(QtWidgets.QTableWidget):
             self.hideRow(0)
 
     def set_filter(self, filter: str) -> None:
-        """"""
+        """记录过滤组合名；空字符串显示全部行，否则只显示组合名相同的行。"""
         self.filter = filter
 
         for row in range(self.rowCount()):
@@ -315,14 +317,14 @@ class PortfolioTradeMonitor(QtWidgets.QTableWidget):
 
 
 class TreeDelegate(QtWidgets.QStyledItemDelegate):
-    """"""
+    """组合树的单元格委托。"""
 
     def sizeHint(
         self,
         option: QtWidgets.QStyleOptionViewItem,
         index: QtCore.QModelIndex
     ) -> QtCore.QSize:
-        """"""
+        """在原有尺寸上把高度设为 40。"""
         size: QtCore.QSize = super().sizeHint(option, index)
         size.setHeight(40)
         return size

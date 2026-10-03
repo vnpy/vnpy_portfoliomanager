@@ -1,3 +1,4 @@
+"""合约与组合的盈亏结果。"""
 from typing import TYPE_CHECKING
 
 from vnpy.trader.object import TickData, TradeData, ContractData
@@ -8,7 +9,7 @@ if TYPE_CHECKING:
 
 
 class ContractResult:
-    """"""
+    """按合约统计某个组合内的仓位和盈亏。"""
 
     def __init__(
         self,
@@ -17,7 +18,7 @@ class ContractResult:
         vt_symbol: str,
         open_pos: float = 0
     ) -> None:
-        """"""
+        """记录组合引用、合约和开盘仓位，并清零盈亏与成交统计。"""
         super().__init__()
 
         self.engine: PortfolioEngine = engine
@@ -41,7 +42,7 @@ class ContractResult:
         self.short_cost: float = 0
 
     def update_trade(self, trade: TradeData) -> None:
-        """"""
+        """忽略重复成交，否则记下成交并按方向增减当前仓位。"""
         # 过滤重复成交
         if trade.vt_tradeid in self.trades:
             return
@@ -54,7 +55,7 @@ class ContractResult:
             self.last_pos -= trade.volume
 
     def calculate_pnl(self) -> None:
-        """"""
+        """没有合约或行情时直接返回，否则按最新价计算交易盈亏，并按昨收和开盘仓位计算持仓盈亏。"""
         vt_symbol: str = self.vt_symbol
 
         contract: ContractData | None = self.engine.get_contract(vt_symbol)
@@ -111,10 +112,10 @@ class ContractResult:
 
 
 class PortfolioResult:
-    """"""
+    """按组合名称汇总盈亏。"""
 
     def __init__(self, reference: str) -> None:
-        """"""
+        """记录组合名称并把三项盈亏清零。"""
         super().__init__()
 
         self.reference: str = reference
@@ -123,7 +124,7 @@ class PortfolioResult:
         self.total_pnl: float = 0
 
     def clear_pnl(self) -> None:
-        """"""
+        """把交易盈亏、持仓盈亏和总盈亏清零。"""
         self.trading_pnl = 0
         self.holding_pnl = 0
         self.total_pnl = 0
