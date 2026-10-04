@@ -23,9 +23,9 @@ from ..engine import (
 )
 
 
-RED_COLOR = QtGui.QColor("red")
-GREEN_COLOR = QtGui.QColor("green")
-WHITE_COLOR = QtGui.QColor("white")
+RED_COLOR: QtGui.QColor = QtGui.QColor("red")
+GREEN_COLOR: QtGui.QColor = QtGui.QColor("green")
+WHITE_COLOR: QtGui.QColor = QtGui.QColor("white")
 
 
 class PortfolioManager(QtWidgets.QWidget):
@@ -133,6 +133,7 @@ class PortfolioManager(QtWidgets.QWidget):
     def update_trades(self) -> None:
         """把带有 reference 属性的历史成交填入成交表。"""
         trades: list[TradeData] = self.main_engine.get_all_trades()
+        trade: TradeData
         for trade in trades:
             # 过滤掉没有用reference的成交
             if hasattr(trade, "reference"):
@@ -145,6 +146,7 @@ class PortfolioManager(QtWidgets.QWidget):
         if not portfolio_item:
             portfolio_item = QtWidgets.QTreeWidgetItem()
             portfolio_item.setText(0, reference)
+            i: int
             for i in range(2, self.column_count):
                 portfolio_item.setTextAlignment(i, QtCore.Qt.AlignmentFlag.AlignCenter)
 
@@ -163,6 +165,7 @@ class PortfolioManager(QtWidgets.QWidget):
         if not contract_item:
             contract_item = QtWidgets.QTreeWidgetItem()
             contract_item.setText(1, vt_symbol)
+            i: int
             for i in range(2, self.column_count):
                 contract_item.setTextAlignment(i, QtCore.Qt.AlignmentFlag.AlignCenter)
 
@@ -214,6 +217,8 @@ class PortfolioManager(QtWidgets.QWidget):
     ) -> None:
         """交易盈亏、持仓盈亏和总盈亏大于 0 显示红色，小于 0 显示绿色，等于 0 显示白色。"""
         start_column: int = 4
+        n: int
+        pnl: float
         for n, pnl in enumerate([
             result["trading_pnl"],
             result["holding_pnl"],
@@ -230,6 +235,7 @@ class PortfolioManager(QtWidgets.QWidget):
 
     def resize_columns(self) -> None:
         """按内容调整树的每一列宽度。"""
+        i: int
         for i in range(self.column_count):
             self.tree.resizeColumnToContents(i)
 
@@ -308,6 +314,7 @@ class PortfolioTradeMonitor(QtWidgets.QTableWidget):
         """记录过滤组合名；空字符串显示全部行，否则只显示组合名相同的行。"""
         self.filter = filter
 
+        row: int
         for row in range(self.rowCount()):
             if not filter:
                 self.showRow(row)

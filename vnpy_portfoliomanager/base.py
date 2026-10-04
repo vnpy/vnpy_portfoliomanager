@@ -67,6 +67,7 @@ class ContractResult:
         size: float = contract.size
 
         # 计算新成交额
+        trade: TradeData
         for trade in self.new_trades:
             trade_volume: float = trade.volume
             trade_cost: float = trade.price * trade_volume * size

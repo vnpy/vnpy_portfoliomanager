@@ -27,11 +27,11 @@ from vnpy.trader.utility import load_json, save_json
 from .base import ContractResult, PortfolioResult
 
 
-APP_NAME = "PortfolioManager"
+APP_NAME: str = "PortfolioManager"
 
-EVENT_PM_CONTRACT = "ePmContract"
-EVENT_PM_PORTFOLIO = "ePmPortfolio"
-EVENT_PM_TRADE = "ePmTrade"
+EVENT_PM_CONTRACT: str = "ePmContract"
+EVENT_PM_PORTFOLIO: str = "ePmPortfolio"
+EVENT_PM_TRADE: str = "ePmTrade"
 
 
 class PortfolioEngine(BaseEngine):
@@ -117,9 +117,11 @@ class PortfolioEngine(BaseEngine):
             return
         self.timer_count = 0
 
+        portfolio_result: PortfolioResult
         for portfolio_result in self.portfolio_results.values():
             portfolio_result.clear_pnl()
 
+        contract_result: ContractResult
         for contract_result in self.contract_results.values():
             contract_result.calculate_pnl()
 
@@ -156,7 +158,11 @@ class PortfolioEngine(BaseEngine):
         date_changed: bool = False
 
         date: str = data.pop("date")
+        key: str
+        d: dict[str, float]
         for key, d in data.items():
+            reference: str
+            vt_symbol: str
             reference, vt_symbol = key.split(",")
 
             if date == today:
@@ -181,6 +187,7 @@ class PortfolioEngine(BaseEngine):
         """按当天日期保存每个合约结果的开盘仓位和当前仓位。"""
         data: dict[str, Any] = {"date": datetime.now().strftime("%Y-%m-%d")}
 
+        contract_result: ContractResult
         for contract_result in self.contract_results.values():
             key: str = f"{contract_result.reference},{contract_result.vt_symbol}"
             data[key] = {
