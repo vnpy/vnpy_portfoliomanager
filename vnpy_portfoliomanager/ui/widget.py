@@ -283,7 +283,7 @@ class PortfolioTradeMonitor(QtWidgets.QTableWidget):
         """在表格首行插入成交；过滤条件与组合名不一致时隐藏该行。"""
         self.insertRow(0)
 
-        reference_cell: BaseCell = BaseCell(getattr(trade, "reference"), trade)
+        reference_cell: BaseCell = BaseCell(getattr(trade, "reference"), trade)  # noqa: B009
         tradeid_cell: BaseCell = BaseCell(trade.tradeid, trade)
         orderid_cell: BaseCell = BaseCell(trade.orderid, trade)
         symbol_cell: BaseCell = BaseCell(trade.symbol, trade)
@@ -307,7 +307,7 @@ class PortfolioTradeMonitor(QtWidgets.QTableWidget):
         self.setItem(0, 9, datetime_cell)
         self.setItem(0, 10, gateway_cell)
 
-        if self.filter and getattr(trade, "reference") != self.filter:
+        if self.filter and getattr(trade, "reference") != self.filter:  # noqa: B009
             self.hideRow(0)
 
     def set_filter(self, filter: str) -> None:
