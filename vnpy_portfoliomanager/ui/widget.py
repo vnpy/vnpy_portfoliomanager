@@ -1,5 +1,8 @@
 """投资组合界面组件。"""
+from typing import cast
+
 from vnpy.trader.object import TradeData
+from vnpy.trader.constant import Direction
 from vnpy.event.engine import Event
 from vnpy.trader.ui import QtWidgets, QtCore, QtGui
 
@@ -39,7 +42,7 @@ class PortfolioManager(QtWidgets.QWidget):
         self.main_engine: MainEngine = main_engine
         self.event_engine: EventEngine = event_engine
 
-        self.portfolio_engine: PortfolioEngine = main_engine.get_engine(APP_NAME)
+        self.portfolio_engine: PortfolioEngine = cast(PortfolioEngine, main_engine.get_engine(APP_NAME))
 
         self.contract_items: dict[tuple[str, str], QtWidgets.QTreeWidgetItem] = {}
         self.portfolio_items: dict[str, QtWidgets.QTreeWidgetItem] = {}
@@ -274,12 +277,12 @@ class PortfolioTradeMonitor(QtWidgets.QTableWidget):
         """在表格首行插入成交；过滤条件与组合名不一致时隐藏该行。"""
         self.insertRow(0)
 
-        reference_cell: BaseCell = BaseCell(trade.reference, trade)
+        reference_cell: BaseCell = BaseCell(getattr(trade, "reference"), trade)
         tradeid_cell: BaseCell = BaseCell(trade.tradeid, trade)
         orderid_cell: BaseCell = BaseCell(trade.orderid, trade)
         symbol_cell: BaseCell = BaseCell(trade.symbol, trade)
         exchange_cell: EnumCell = EnumCell(trade.exchange, trade)
-        direction_cell: DirectionCell = DirectionCell(trade.direction, trade)
+        direction_cell: DirectionCell = DirectionCell(cast(Direction, trade.direction), trade)
         offset_cell: EnumCell = EnumCell(trade.offset, trade)
         price_cell: BaseCell = BaseCell(trade.price, trade)
         volume_cell: BaseCell = BaseCell(trade.volume, trade)
@@ -298,7 +301,7 @@ class PortfolioTradeMonitor(QtWidgets.QTableWidget):
         self.setItem(0, 9, datetime_cell)
         self.setItem(0, 10, gateway_cell)
 
-        if self.filter and trade.reference != self.filter:
+        if self.filter and getattr(trade, "reference") != self.filter:
             self.hideRow(0)
 
     def set_filter(self, filter: str) -> None:
@@ -309,7 +312,7 @@ class PortfolioTradeMonitor(QtWidgets.QTableWidget):
             if not filter:
                 self.showRow(row)
             else:
-                item: QtWidgets.QTreeWidgetItem = self.item(row, 0)
+                item: QtWidgets.QTableWidgetItem | None = self.item(row, 0)
                 if item and item.text() == filter:
                     self.showRow(row)
                 else:
@@ -322,7 +325,7 @@ class TreeDelegate(QtWidgets.QStyledItemDelegate):
     def sizeHint(
         self,
         option: QtWidgets.QStyleOptionViewItem,
-        index: QtCore.QModelIndex
+        index: QtCore.QModelIndex | QtCore.QPersistentModelIndex
     ) -> QtCore.QSize:
         """在原有尺寸上把高度设为 40。"""
         size: QtCore.QSize = super().sizeHint(option, index)

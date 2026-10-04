@@ -95,8 +95,8 @@ class PortfolioEngine(BaseEngine):
 
         contract_result.update_trade(trade)
 
-        # 添加成交数据
-        trade.reference = reference
+        # 添加成交数据。TradeData 没有 reference 字段，运行时仍挂在实例上。
+        setattr(trade, "reference", reference)
         self.event_engine.put(Event(EVENT_PM_TRADE, trade))
 
         # 自动订阅tick数据
